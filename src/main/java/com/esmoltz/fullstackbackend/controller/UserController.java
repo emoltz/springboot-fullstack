@@ -4,6 +4,8 @@ import com.esmoltz.fullstackbackend.model.User;
 import com.esmoltz.fullstackbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.esmoltz.fullstackbackend.exception.*;
+
 
 import java.util.List;
 
@@ -21,6 +23,12 @@ public class UserController {
     @GetMapping("/users")
     List<User> getAllUsers(){
         return userRepository.findAll();
+    }
+
+    @GetMapping("/user/{id}")
+    User getUserById(@PathVariable Long id){
+        return userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException(id));
     }
 
 }
