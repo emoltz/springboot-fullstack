@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import axios from "axios";
+import {Link, useParams} from "react-router-dom";
 
 export default function Home() {
     //create object for storing user info
@@ -9,9 +10,16 @@ export default function Home() {
         loadUsers();
     }, []) //makes it run once and puts it into an array
 
+    const {id} = useParams();
+
     const loadUsers = async () => {
         const result = await axios.get("http://localhost:8080/users")
         setUsers(result.data);
+    }
+
+    const deleteUser = async (id) => {
+        await axios.delete(`http://localhost:8080/user/${id}`);
+        await loadUsers();
     }
 
 
@@ -33,14 +41,17 @@ export default function Home() {
                     {
                         users.map((user, index) => (
                             <tr key={user.id}>
-                                <th scope="row">{user.id}</th>
+                                <th scope="row">{index + 1}</th>
                                 <td>{user.name}</td>
                                 <td>{user.username}</td>
                                 <td>{user.email}</td>
                                 <td>
-                                    <button className="btn btn-outline-primary mx-2">View</button>
-                                    <button className="btn btn-outline-secondary mx-2">Edit</button>
-                                    <button className="btn btn-outline-danger mx-2">Delete</button>
+                                    <Link className="btn btn-outline-primary mx-2" to={`/viewuser/${user.id}`}>View</Link>
+                                    <Link className="btn btn-outline-secondary mx-2"
+                                          to={`/edituser/${user.id}`}>
+                                        Edit
+                                    </Link>
+                                    <button onClick={() => deleteUser(user.id)} className="btn btn-outline-danger mx-2">Delete</button>
                                 </td>
                             </tr>
                         ))
